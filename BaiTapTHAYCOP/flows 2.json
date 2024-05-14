@@ -1,0 +1,377 @@
+[
+    {
+        "id": "33367e7a8591acd3",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "fb868da444a2fc72",
+        "type": "inject",
+        "z": "33367e7a8591acd3",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 360,
+        "wires": [
+            [
+                "074a47cabf177e19"
+            ]
+        ]
+    },
+    {
+        "id": "074a47cabf177e19",
+        "type": "http request",
+        "z": "33367e7a8591acd3",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:8000/weather",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 390,
+        "y": 360,
+        "wires": [
+            [
+                "66abc1e970aefb36"
+            ]
+        ]
+    },
+    {
+        "id": "4674caf8b9411f97",
+        "type": "http in",
+        "z": "33367e7a8591acd3",
+        "name": "/get-temp",
+        "url": "/get-temp",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 120,
+        "y": 580,
+        "wires": [
+            [
+                "bae5499093b9a4be"
+            ]
+        ]
+    },
+    {
+        "id": "4ed94249b522e1af",
+        "type": "http response",
+        "z": "33367e7a8591acd3",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 780,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "66abc1e970aefb36",
+        "type": "json",
+        "z": "33367e7a8591acd3",
+        "name": "",
+        "property": "payload",
+        "action": "str",
+        "pretty": false,
+        "x": 570,
+        "y": 360,
+        "wires": [
+            [
+                "a9f2fb224e4a9959",
+                "c820a0e3ec357104"
+            ]
+        ]
+    },
+    {
+        "id": "a9f2fb224e4a9959",
+        "type": "function",
+        "z": "33367e7a8591acd3",
+        "name": "function 1",
+        "func": "// Parse JSON thành mảng các đối tượng\nvar data = JSON.parse(msg.payload);\n\n// Tạo một chuỗi để chứa các câu lệnh SQL INSERT\nvar sqlQuery = \"\";\n\n// Lặp qua từng đối tượng trong mảng và tạo câu lệnh INSERT tương ứng\nfor (var i = 0; i < data.length; i++) {\n    var obj = data[i];\n    sqlQuery += \"INSERT INTO thoi_tiet (City, Temperature, Humidity, Pressure, Date) VALUES ('\" + obj.City + \"', \" + obj.Temperature + \", \" + obj.Humidity + \", \" + obj.Pressure + \", '\" + obj.Date + \"');\\n\";\n}\n\n// Gửi câu lệnh SQL đã tạo tới output\nmsg.payload = sqlQuery;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 460,
+        "wires": [
+            [
+                "6cc348d0a7c4770c"
+            ]
+        ]
+    },
+    {
+        "id": "6cc348d0a7c4770c",
+        "type": "MSSQL",
+        "z": "33367e7a8591acd3",
+        "mssqlCN": "a0684e2de6cf2330",
+        "name": "",
+        "outField": "payload",
+        "returnType": 0,
+        "throwErrors": 1,
+        "query": "",
+        "modeOpt": "",
+        "modeOptType": "query",
+        "queryOpt": "payload",
+        "queryOptType": "editor",
+        "paramsOpt": "queryParams",
+        "paramsOptType": "none",
+        "rows": "rows",
+        "rowsType": "msg",
+        "parseMustache": true,
+        "params": [],
+        "x": 840,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c820a0e3ec357104",
+        "type": "debug",
+        "z": "33367e7a8591acd3",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 840,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "bae5499093b9a4be",
+        "type": "http request",
+        "z": "33367e7a8591acd3",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://localhost/thaycop/getdata.php",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 310,
+        "y": 580,
+        "wires": [
+            [
+                "f3921a97c70999da"
+            ]
+        ]
+    },
+    {
+        "id": "f3921a97c70999da",
+        "type": "function",
+        "z": "33367e7a8591acd3",
+        "name": "function 2",
+        "func": "// Chuyển đổi chuỗi JSON thành đối tượng JavaScript\nvar data = JSON.parse(msg.payload);\n\n// Lọc ra chỉ dữ liệu về nhiệt độ (Temperature) và ngày (Date)\nvar filteredData = data.map(function(item) {\n    return {\n        Temperature: item.Temperature,\n        Date: item.Date.date\n    };\n});\n\n// Gửi dữ liệu đã lọc tới đầu ra\nmsg.payload = filteredData;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 580,
+        "wires": [
+            [
+                "4ed94249b522e1af"
+            ]
+        ]
+    },
+    {
+        "id": "5999a33f8817e473",
+        "type": "http in",
+        "z": "33367e7a8591acd3",
+        "name": "/get-temp",
+        "url": "/get-humi",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 160,
+        "y": 640,
+        "wires": [
+            [
+                "014abdcc303ce08c"
+            ]
+        ]
+    },
+    {
+        "id": "c1ad771a11771380",
+        "type": "http response",
+        "z": "33367e7a8591acd3",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 820,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "014abdcc303ce08c",
+        "type": "http request",
+        "z": "33367e7a8591acd3",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://localhost/thaycop/getdata.php",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 350,
+        "y": 640,
+        "wires": [
+            [
+                "dc021708b75c3cfc"
+            ]
+        ]
+    },
+    {
+        "id": "dc021708b75c3cfc",
+        "type": "function",
+        "z": "33367e7a8591acd3",
+        "name": "function 3",
+        "func": "// Chuyển đổi chuỗi JSON thành đối tượng JavaScript\nvar data = JSON.parse(msg.payload);\n\n// Lọc ra chỉ dữ liệu về nhiệt độ (Temperature) và ngày (Date)\nvar filteredData = data.map(function(item) {\n    return {\n        Humidity: item.Humidity,\n        Date: item.Date.date\n    };\n});\n\n// Gửi dữ liệu đã lọc tới đầu ra\nmsg.payload = filteredData;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 640,
+        "wires": [
+            [
+                "c1ad771a11771380"
+            ]
+        ]
+    },
+    {
+        "id": "df25d060f18caa68",
+        "type": "http in",
+        "z": "33367e7a8591acd3",
+        "name": "/get-temp",
+        "url": "/get-press",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 160,
+        "y": 720,
+        "wires": [
+            [
+                "dbbd931d0abaf286"
+            ]
+        ]
+    },
+    {
+        "id": "ba9c2309f3e59199",
+        "type": "http response",
+        "z": "33367e7a8591acd3",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 820,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "dbbd931d0abaf286",
+        "type": "http request",
+        "z": "33367e7a8591acd3",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://localhost/thaycop/getdata.php",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 350,
+        "y": 720,
+        "wires": [
+            [
+                "937802b55475999f"
+            ]
+        ]
+    },
+    {
+        "id": "937802b55475999f",
+        "type": "function",
+        "z": "33367e7a8591acd3",
+        "name": "function 4",
+        "func": "// Chuyển đổi chuỗi JSON thành đối tượng JavaScript\nvar data = JSON.parse(msg.payload);\n\n// Lọc ra chỉ dữ liệu về nhiệt độ (Temperature) và ngày (Date)\nvar filteredData = data.map(function(item) {\n    return {\n        Pressure: item.Pressure,\n        Date: item.Date.date\n    };\n});\n\n// Gửi dữ liệu đã lọc tới đầu ra\nmsg.payload = filteredData;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 720,
+        "wires": [
+            [
+                "ba9c2309f3e59199"
+            ]
+        ]
+    },
+    {
+        "id": "a0684e2de6cf2330",
+        "type": "MSSQL-CN",
+        "tdsVersion": "7_4",
+        "name": "SQLServer",
+        "server": "DUYVPRO",
+        "port": "1433",
+        "encyption": true,
+        "trustServerCertificate": true,
+        "database": "thaycop",
+        "useUTC": true,
+        "connectTimeout": "15000",
+        "requestTimeout": "15000",
+        "cancelTimeout": "5000",
+        "pool": "5",
+        "parseJSON": false,
+        "enableArithAbort": true,
+        "readOnlyIntent": false
+    }
+]
